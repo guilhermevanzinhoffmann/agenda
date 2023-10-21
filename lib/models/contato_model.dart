@@ -1,7 +1,7 @@
 class ContatoModel {
   List<Contato>? results;
 
-  ContatoModel({this.results});
+  ContatoModel(this.results);
 
   ContatoModel.fromJson(Map<String, dynamic> json) {
     if (json['results'] != null) {
