@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:agenda/models/contato_model.dart';
 import 'package:agenda/pages/contato_page.dart';
 import 'package:agenda/services/back4App/back4app_service.dart';
+import 'package:agenda/shared/app_images.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,9 +29,10 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         carregando = true;
       });
+    }
+    contatoModel = await service.get(null);
 
-      contatoModel = await service.get(null);
-
+    if (mounted) {
       setState(() {
         carregando = false;
       });
@@ -46,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: carregando
           ? const Center(child: CircularProgressIndicator())
-          : contatoModel.results == null || contatoModel.results!.isEmpty
+          : (contatoModel.results == null || contatoModel.results!.isEmpty)
               ? const Center(child: Text("Nenhum contato encontrado"))
               : ListView.builder(
                   itemCount: contatoModel.results!.length,
@@ -90,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                                 MaterialPageRoute(
                                     builder: (BuildContext bc) => ContatoPage(
                                         contatoId: contatoModel
-                                            .results![index].objectId!)));
+                                            .results![index].objectId)));
                           },
                           child: Card(
                             elevation: 10,
@@ -104,33 +108,38 @@ class _HomePageState extends State<HomePage> {
                                 children: [
                                   Row(
                                     children: [
-                                      Expanded(
-                                        child: Text(
-                                            "Estado: ${contatoModel.results![index].nome ?? ""}",
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
+                                      contatoModel.results![index]
+                                                      .caminhoFoto !=
+                                                  null &&
+                                              contatoModel.results![index]
+                                                  .caminhoFoto!.isNotEmpty
+                                          ? File(contatoModel.results![index]
+                                                      .caminhoFoto!)
+                                                  .existsSync()
+                                              ? Image.file(
+                                                  File(contatoModel
+                                                      .results![index]
+                                                      .caminhoFoto!),
+                                                  height: 50,
+                                                  width: 50,
+                                                )
+                                              : Image.asset(
+                                                  AppImages.user,
+                                                  height: 50,
+                                                  width: 50,
+                                                )
+                                          : Image.asset(
+                                              AppImages.user,
+                                              height: 50,
+                                              width: 50,
+                                            ),
+                                      Text(
+                                          contatoModel.results![index].email ??
+                                              "",
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500)),
                                     ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                            "Cidade: ${contatoModel.results![index].email ?? ""}",
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500)),
-                                      ),
-                                    ],
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                        contatoModel.results![index].email ??
-                                            "",
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500)),
                                   ),
                                 ],
                               ),
@@ -141,6 +150,15 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext bc) =>
+                        const ContatoPage(contatoId: null)));
+          },
+          child: const Icon(Icons.add)),
     ));
   }
 }

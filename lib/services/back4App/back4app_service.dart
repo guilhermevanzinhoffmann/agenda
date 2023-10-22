@@ -5,12 +5,12 @@ class Back4AppService {
   final CustomDioBack4App _customDioBack4App = CustomDioBack4App();
   final _url = "Contato";
 
-  Future<ContatoModel> get(String? nome) async {
+  Future<ContatoModel> get(String? objectId) async {
     try {
       var contatoModel = ContatoModel([]);
       var url = _url;
-      if (nome != null && nome.isNotEmpty) {
-        url = "$url?where={\"nome\":\"$nome\"}";
+      if (objectId != null && objectId.isNotEmpty) {
+        url = "$url?where={\"objectId\":\"$objectId\"}";
       }
       var result = await _customDioBack4App.dio.get(url);
 

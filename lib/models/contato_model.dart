@@ -31,8 +31,8 @@ class Contato {
   String? createdAt;
   String? updatedAt;
 
-  Contato(this.objectId, this.nome, this.tipoTelefone, this.telefone,
-      this.email, this.caminhoFoto, this.createdAt, this.updatedAt);
+  Contato(this.nome, this.tipoTelefone, this.telefone, this.email,
+      this.caminhoFoto);
 
   Contato.fromJson(Map<String, dynamic> json) {
     objectId = json['objectId'];
